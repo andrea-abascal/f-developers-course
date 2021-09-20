@@ -36,13 +36,50 @@ function isSafe(queensPositions, rowIndex, columnIndex){
 
 	return true
 }	
- 
-queen = new QueenPosition(1, 2)
 
-const result = isSafe([queen], 3, 0)
+function allQueensSet(queensPositions){
+	return queensPositions.every(position => position !== null)
+}
 
-console.log(result)
+function nQueensRecursive (solutions, previousQueensPositions, queensCount, columnIndex){
+	/* Una copia del arreglo de queensPositions para tener un arreglo actual 
+	 * donde se pueda actuar en la instancia recursiva
+	 */
+	const queensPositions = [...previousQueensPositions].map(queenPosition => {
+		return !queenPosition ? queenPosition : new QueenPosition(queenPosition.rowIndex, queenPosition.columnIndex)
+	})
+
+	if(allQueensSet(queensPositions)){
+		solutions.push(queensPositions)
+		return true
+	}
+
+	for(let rowIndex = 0; rowIndex < queensCount; rowIndex += 1){
+		if(isSafe(queensPositions, rowIndex, columnIndex)){
+			queensPositions[rowIndex] = new QueenPosition(rowIndex, columnIndex)
+			
+			nQueensRecursive(solutions, queensPositions, queensCount, columnIndex + 1)
+			
+			queensPositions[rowIndex] = null
+		}
+	}
+
+	return false
+}
 
 
+function nQueens(queensCount){
+	// Arreglo de prueba y error
+	const queensPositions = Array(queensCount).fill(null)
+	// Arreglo que contiene todas las posibles soluciones
+	const solutions = []
+	
+	// Evaluara de manera exhaustiva
+	
+	nQueensRecursive(solutions, queensPositions, queensCount, 0)
 
+	return solutions
+}
 
+const results = nQueens(4)
+console.log(results)
